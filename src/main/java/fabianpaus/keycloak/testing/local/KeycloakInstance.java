@@ -1,28 +1,49 @@
 package fabianpaus.keycloak.testing.local;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Starts a local Keycloak instance for integration tests.
+ * A running Keycloak instance for integration testing.
  * <p>
- * You only need to specify the Keycloak version that you want to run, e.g. 26.0.7.
- * After downloading and extracting the specified version, the Keycloak can be setup.
- * This includes loading of customized extensions and themes as JAR files.
- * Furthermore, exported configuration can be imported to set up a defined configuration.
- * </p>
- * <p>
- * After the Keycloak has started, you can use a Keycloak admin client to adapt the configuration,
- * create users and set up clients for authentication.
+ * After downloading a Keycloak distribution via the KeycloakDistribution class,
+ * you can start a local Keycloak instance. The server will open an HTTP port that
+ * can be used to access the admin API as well as the web frontend.
  * </p>
  */
 public class KeycloakInstance {
-    private final Path home;
+    private final Process process;
 
-    public KeycloakInstance(String version) {
-        this.home = Downloader.download(version, Path.of("downloads"));
+    public KeycloakInstance(Process process) {
+        this.process = process;
     }
 
-    public Path getHome() {
-        return home;
+    public static KeycloakInstance start(Path home) {
+        List<String> command = new ArrayList<>();
+        command.add("java");
+        command.add("--version");
+
+        ProcessBuilder builder = new ProcessBuilder();
+        builder.command(command);
+
+        try {
+            Process process = builder.start();
+            return new KeycloakInstance(process);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void close() {
+        if (this.process == null) return;
+
+        try {
+            this.process.destroy();
+            this.process.waitFor();
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
