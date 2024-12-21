@@ -1,6 +1,6 @@
 # Local Keycloak Testing
 
-| :warning: Prototype Phase           |
+| :warning: Prototyping Phase           |
 |:------------------------------------|
 | The code in this repository is currently being prototyped. It is not recommended to use for any real projects yet.     |
 
@@ -27,9 +27,9 @@ However, some core ideas are currently being explored.
 | Component         | State           | Comment |
 --------------------|-----------------|---------|
 | Integration Tests | :construction:  | Starting a local Keycloak instance (under development) |
-| UI Tests          | :hourglass:     | TODO: Investigate UI testing frameworks |
-| Configuration     | :hourglass:     | TODO: Research how to tackle this problem |
-| Monitoring        | :hourglass:     | TODO: Define what needs to be monitored | 
+| UI Tests          | :hourglass:     | Investigating UI testing frameworks |
+| Configuration     | :hourglass:     | Researching how to tackle this problem |
+| Monitoring        | :hourglass:     | Defining what needs to be monitored | 
 
 ## Related Projects
 
