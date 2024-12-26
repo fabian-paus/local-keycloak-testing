@@ -61,9 +61,9 @@ public class KcCommand {
         commands.add("-Duser.language=en");
         commands.add("-Duser.country=US");
 
-        commands.add("-Dkc.home.dir=\"" + home + "\"");
-        commands.add("-Djboss.server.config.dir=\"" + home.resolve("conf") + "\"");
-        commands.add("-Dkeycloak.theme.dir=\"" + home.resolve("themes") + "\"");
+        commands.add("-Dkc.home.dir=" + home);
+        commands.add("-Djboss.server.config.dir=" + home.resolve("conf"));
+        commands.add("-Dkeycloak.theme.dir=" + home.resolve("themes"));
 
         commands.add("-Djava.util.logging.manager=org.jboss.logmanager.LogManager");
         commands.add("-Dquarkus-log-max-startup-records=10000");
