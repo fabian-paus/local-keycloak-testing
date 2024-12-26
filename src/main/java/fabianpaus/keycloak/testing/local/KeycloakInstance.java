@@ -123,13 +123,7 @@ public class KeycloakInstance {
 
     private static void build(Path home) {
         List<String> command = makeKcCommand(home, true);
-
-//        try {
-//            Runtime.getRuntime().exec("chmod +x " + home.resolve("bin/kc.sh"));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-        //ProcessBuilder builder = new ProcessBuilder("bin/kc.sh", "build");
+        
         ProcessBuilder builder = new ProcessBuilder();
         builder.directory(home.toFile());
         builder.command(command);
