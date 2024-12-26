@@ -1,5 +1,8 @@
 package fabianpaus.keycloak.testing.local;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +24,8 @@ import static fabianpaus.keycloak.testing.local.KcCommand.makeKcCommand;
  * </p>
  */
 public class KeycloakInstance {
+    private static final Logger logger = LogManager.getLogger(KeycloakInstance.class);
+
     private Process process;
     private final Thread outputReader;
     private final List<String> log = Collections.synchronizedList(new ArrayList<>());
@@ -37,7 +42,7 @@ public class KeycloakInstance {
             String line;
             try {
                 while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
+                    logger.info(line);
                     log.add(line);
                 }
             } catch (IOException e) {
@@ -45,8 +50,8 @@ public class KeycloakInstance {
                     // If the process exits, this message is expected
                     return;
                 }
-                System.err.println("LocalKeycloak: Error while reading output");
-                System.err.println(e.getClass().getTypeName() + ": " + e.getMessage());
+                logger.error("LocalKeycloak: Error while reading output");
+                logger.error(e);
             }
         });
         this.outputReader.start();
@@ -62,7 +67,7 @@ public class KeycloakInstance {
         builder.redirectErrorStream(true);
 
         try {
-            System.out.println("LocalKeycloak: Starting local instance");
+            logger.info("LocalKeycloak: Starting local instance");
             Process process = builder.start();
             return new KeycloakInstance(process);
         } catch (IOException ex) {
@@ -73,12 +78,12 @@ public class KeycloakInstance {
     public synchronized void close() {
         if (this.process == null) return;
 
-        System.out.println("LocalKeycloak: Exiting process");
+        logger.info("LocalKeycloak: Exiting process");
         try {
             this.process.destroy();
             int exitCode = this.process.waitFor();
             this.outputReader.join();
-            System.out.println("LocalKeycloak: Process has exited with code " + exitCode);
+            logger.info("LocalKeycloak: Process has exited with code {}", exitCode);
             this.process = null;
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
@@ -104,7 +109,7 @@ public class KeycloakInstance {
 
                 int responseCode = urlConnection.getResponseCode();
                 if (responseCode == 200) {
-                    System.out.println("LocalKeycloak: Connected after " + i + " attempts");
+                    logger.info("LocalKeycloak: Connected after {} attempts", i);
                     return;
                 }
             } catch (IOException e) {
@@ -123,20 +128,19 @@ public class KeycloakInstance {
 
     private static void build(Path home) {
         List<String> command = makeKcCommand(home, true);
-        
+
         ProcessBuilder builder = new ProcessBuilder();
         builder.directory(home.toFile());
         builder.command(command);
         builder.inheritIO();
 
         try {
-            System.out.println("LocalKeycloak: Building with command");
-            // System.out.println(command);
+            logger.info("LocalKeycloak: Building");
             Process process = builder.start();
 
             int result = process.waitFor();
             if (result != 0) {
-                System.err.println("LocalKeycloak: Failed to build with exit code " + result);
+                logger.error("LocalKeycloak: Failed to build with exit code {}", result);
                 throw new RuntimeException("Failed to build: " + result);
             }
         } catch (IOException | InterruptedException e) {

@@ -1,5 +1,8 @@
 package fabianpaus.keycloak.testing.local;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.file.Path;
 
 /**
@@ -16,6 +19,8 @@ import java.nio.file.Path;
  * </p>
  */
 public class KeycloakDistribution {
+    private static final Logger logger = LogManager.getLogger(KeycloakDistribution.class);
+
     private final Path home;
 
     public KeycloakDistribution(Path home) {
@@ -24,7 +29,7 @@ public class KeycloakDistribution {
 
     public static KeycloakDistribution download(String version, String downloadPath) {
         Path home = Downloader.download(version, Path.of(downloadPath));
-        System.out.println("LocalKeycloak: Downloaded to " + home.toAbsolutePath());
+        logger.info("LocalKeycloak: Downloaded to {}", home.toAbsolutePath());
         return new KeycloakDistribution(home.toAbsolutePath());
     }
 
