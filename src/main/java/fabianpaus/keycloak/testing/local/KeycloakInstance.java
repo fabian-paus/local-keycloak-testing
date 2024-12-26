@@ -58,6 +58,7 @@ public class KeycloakInstance {
         builder.redirectErrorStream(true);
 
         try {
+            System.out.println("LocalKeycloak: Starting local instance");
             Process process = builder.start();
             return new KeycloakInstance(process);
         } catch (IOException ex) {
