@@ -124,6 +124,8 @@ public class KeycloakInstance {
         builder.inheritIO();
 
         try {
+            System.out.println("LocalKeycloak: Building with command");
+            System.out.println(command);
             Process process = builder.start();
 
             int result = process.waitFor();
