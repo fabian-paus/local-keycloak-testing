@@ -41,6 +41,10 @@ public class KeycloakInstance {
                     log.add(line);
                 }
             } catch (IOException e) {
+                if (e.getMessage().equals("Stream closed")) {
+                    // If the process exits, this message is expected
+                    return;
+                }
                 System.err.println("LocalKeycloak: Error while reading output");
                 System.err.println(e.getClass().getTypeName() + ": " + e.getMessage());
             }
@@ -120,14 +124,15 @@ public class KeycloakInstance {
     private static void build(Path home) {
         List<String> command = makeKcCommand(home, true);
 
-        try {
-            Runtime.getRuntime().exec("chmod +x " + home.resolve("bin/kc.sh"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        ProcessBuilder builder = new ProcessBuilder("bin/kc.sh", "build");
+//        try {
+//            Runtime.getRuntime().exec("chmod +x " + home.resolve("bin/kc.sh"));
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+        //ProcessBuilder builder = new ProcessBuilder("bin/kc.sh", "build");
+        ProcessBuilder builder = new ProcessBuilder();
         builder.directory(home.toFile());
-        //builder.command(command);
+        builder.command(command);
         builder.inheritIO();
 
         try {
