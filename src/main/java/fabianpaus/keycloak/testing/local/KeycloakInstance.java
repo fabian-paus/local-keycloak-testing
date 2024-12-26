@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static fabianpaus.keycloak.testing.local.KcCommand.makeKcCommand;
+
 /**
  * A running Keycloak instance for integration testing.
  * <p>
@@ -95,68 +97,5 @@ public class KeycloakInstance {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static List<String> makeKcCommand(Path home, boolean build) {
-
-        List<String> commands = new ArrayList<>();
-        commands.add("java");
-
-        if (build) {
-            commands.add("-Dkc.config.build-and-exit=true");
-        } else {
-            commands.add("-Dkc.config.built=true");
-        }
-
-        // Taken from kc.bat
-        commands.add("-Djava.util.concurrent.ForkJoinPool.common.threadFactory=io.quarkus.bootstrap.forkjoin.QuarkusForkJoinWorkerThreadFactory");
-        commands.add("-Dprogram.name=kc.bat");
-
-        // Configure metaspace size
-        commands.add("-XX:MetaspaceSize=96M");
-        commands.add("-XX:MaxMetaspaceSize=256m");
-        commands.add("-XX:+ExitOnOutOfMemoryError");
-
-        // Default encoding: UTF-8
-        commands.add("-Dfile.encoding=UTF-8");
-        commands.add("-Dsun.stdout.encoding=UTF-8");
-        commands.add("-Dsun.err.encoding=UTF-8");
-        commands.add("-Dstdout.encoding=UTF-8");
-        commands.add("-Dstderr.encoding=UTF-8");
-
-        commands.add("-Djava.security.egd=file:/dev/urandom");
-        commands.add("-XX:+UseG1GC");
-        commands.add("-XX:FlightRecorderOptions=stackdepth=512");
-        commands.add("-Xms64m");
-        commands.add("-Xmx512m");
-
-        commands.add("--add-opens=java.base/java.util=ALL-UNNAMED");
-        commands.add("--add-opens=java.base/java.util.concurrent=ALL-UNNAMED");
-        commands.add("--add-opens=java.base/java.security=ALL-UNNAMED");
-
-        commands.add("-Duser.language=en");
-        commands.add("-Duser.country=US");
-
-        commands.add("-Dkc.home.dir=\"" + home + "\"");
-        commands.add("-Djboss.server.config.dir=\"" + home.resolve("conf") + "\"");
-        commands.add("-Dkeycloak.theme.dir=\"" + home.resolve("themes") + "\"");
-
-        commands.add("-Djava.util.logging.manager=org.jboss.logmanager.LogManager");
-        commands.add("-Dquarkus-log-max-startup-records=10000");
-        commands.add("-Dpicocli.disable.closures=true");
-
-        // Class path
-        commands.add("-cp");
-        commands.add(home.resolve("lib/quarkus-run.jar").toString());
-
-        // Java entry point, i.e. the main function
-        commands.add("io.quarkus.bootstrap.runner.QuarkusEntryPoint");
-
-        // Keycloak arguments
-        commands.add("--profile=dev");
-
-        commands.add("start-dev");
-
-        return commands;
     }
 }
