@@ -119,13 +119,14 @@ public class KeycloakInstance {
     private static void build(Path home) {
         List<String> command = makeKcCommand(home, true);
 
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.command(command);
+        ProcessBuilder builder = new ProcessBuilder("bin/kc.sh", "build");
+        builder.directory(home.toFile());
+        //builder.command(command);
         builder.inheritIO();
 
         try {
             System.out.println("LocalKeycloak: Building with command");
-            System.out.println(command);
+            // System.out.println(command);
             Process process = builder.start();
 
             int result = process.waitFor();
