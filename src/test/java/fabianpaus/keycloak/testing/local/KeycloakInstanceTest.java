@@ -18,5 +18,14 @@ public class KeycloakInstanceTest {
         KeycloakDistribution distribution = KeycloakDistribution.download(KEYCLOAK_VERSION, "downloads");
 
         KeycloakInstance instance = distribution.start();
+
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        instance.close();
     }
 }

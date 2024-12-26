@@ -24,7 +24,7 @@ public class KeycloakDistribution {
 
     public static KeycloakDistribution download(String version, String downloadPath) {
         Path home = Downloader.download(version, Path.of(downloadPath));
-        return new KeycloakDistribution(home);
+        return new KeycloakDistribution(home.toAbsolutePath());
     }
 
     public Path getHome() {
