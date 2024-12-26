@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,6 +78,42 @@ public class KeycloakInstance {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public void waitForStartup() {
+        try {
+            URL localUrl = new URI("http://localhost:8080").toURL();
+            waitForHttpConnection(localUrl);
+        } catch (MalformedURLException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void waitForHttpConnection(URL url) {
+        for (int i = 0; i < 30; ++i) {
+            try {
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setReadTimeout(2000);
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == 200) {
+                    System.out.println("LocalKeycloak: Connected after " + i + " attempts");
+                    return;
+                }
+            } catch (IOException e) {
+                // Errors are expected here since Keycloak is just starting
+            }
+
+            // Wait a little bit before trying again
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // Ignored
+            }
+        }
+        throw new RuntimeException("Could not connect to local Keycloak instance");
     }
 
     private static void build(Path home) {
