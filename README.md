@@ -4,6 +4,8 @@
 |:-------------------------------------------------------------------------------------------------------------------|
 | The code in this repository is currently being prototyped. It is not recommended to use for any real projects yet. |
 
+![Test Workflow Status](https://github.com/fabian-paus/local-keycloak-testing/actions/workflows/maven.yml/badge.svg)
+
 ## Goal
 
 This project aims to simplify automated testing for the identity and access management software
